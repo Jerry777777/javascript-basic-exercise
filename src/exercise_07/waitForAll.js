@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 export default function waitForAll(...promises) {
   // This function returns a promise which will be triggered when all the `promises` are completed.
   //
@@ -8,6 +9,13 @@ export default function waitForAll(...promises) {
   //
   // * Please implement this function and pass all the tests in wait_for_all_spec.js.
   // * Please do NOT modify the signature of the function.
+  for (const i of promises) {
+    if (!(i instanceof Promise)) {
+      throw new Error('Not all elements are promises.');
+    }
+  }
 
-  throw new Error('Please delete this line and implement the function');
+  return Promise.allSettled(promises)
+    .then(allPromises => allPromises.filter(p => p.status === 'rejected'))
+    .then(resPromises => (resPromises.length > 0 ? Promise.reject() : Promise.resolve()));
 }
